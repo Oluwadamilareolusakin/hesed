@@ -17,8 +17,16 @@ defmodule HesedWeb.Router do
   scope "/", HesedWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    get "/users/sign-in", SessionController, :index
+    get "/sign-up", UserRegistrationsController, :new
+    post "/sign-up", UserRegistrationsController, :create
+
+    post "/login", SessionsController, :create
+    get "/login", SessionsController, :new
+    delete "/logout", SessionsController, :destroy
+
+    get "/users", UsersController, :index
+    patch "/users/:id/archive", UsersController, :archive
+    delete "/users/:id", UsersController, :destroy
   end
 
   # Other scopes may use custom stacks.

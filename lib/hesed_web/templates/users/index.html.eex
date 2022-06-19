@@ -1,0 +1,36 @@
+<header class="admin-users-header">
+  <%= form_for @conn, Routes.users_path(@conn, :index), [method: :get], fn f -> %>
+    <label class="admin-users-status-label">
+      Users status:
+    </label> 
+   <%= select f, :user_status, ["All", "Archived", "Active"], class: "admin-users-status-select" %>
+    <%= submit "Go", class: "admin-users-status-submit" %>
+  <% end %>
+</header>
+<table class="admin-users-table">
+  <tr class="admin-users-row admin-users-heading">
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Email</th>
+    <th>Username</th>
+    <th>Phone Number</th>
+    <th>Archived</th>
+    <th>Action</th>
+  </tr>
+  <%= for user <- @users do%>
+    <tr class="admin-users-row">
+      <td><%= user.first_name %></td>
+      <td><%= user.last_name %></td>
+      <td><%= user.email %></td>
+      <td><%= user.username %></td>
+      <td><%= user.phone_number %></td>
+      <td><%= user.archived %></td>
+      <td>
+        <%= unless user.archived do %>
+          <%= link "Archive", to: "/users/#{user.id}/archive", method: :patch, data: [confirm: "Are you sure you want to archive this user?"] %> |
+      <% end %>
+        <%= link "Delete", to: "/users/#{user.id}", method: :delete, data: [confirm: "Are you sure you want to delete this user?"] %>
+      </td>
+    </tr>
+  <% end %>
+</table>
