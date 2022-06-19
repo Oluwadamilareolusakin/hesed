@@ -1,0 +1,7 @@
+<%=  form_for @conn, Routes.sessions_path(@conn, :create), [class: "sign-in"], fn f -> %>
+  <div class="sign-up-form-inner">
+    <%= text_input f, :user_identifier, placeholder: "Username or Email" %>
+    <%= text_input f, :password, placeholder: "Password" %>
+    <%= submit "LOGIN", class: "sign-in" %>
+  </div>
+<% end %>
