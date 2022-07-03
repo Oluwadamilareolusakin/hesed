@@ -1,0 +1,21 @@
+.form-heading-text {
+  text-align: center;
+}
+
+.form-title {
+  
+}
+
+.form-description {
+
+}
+
+.form-main-cta {
+  width: 100%;
+  padding: .5rem 0;
+  height: auto;
+}
+
+input[type=text] {
+  padding: 2.5rem 1rem;  
+}

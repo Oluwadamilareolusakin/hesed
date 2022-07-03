@@ -12,8 +12,8 @@ defmodule HesedWeb.SessionsController do
       {:ok, user} ->
         conn
         |> store_user_in_session(user)
-        |> put_flash(:success, "Successful login")
-        |> redirect(to: "/users")
+        |> put_flash(:info, "Successful login")
+        |> redirect(to: "/admin/users")
 
       {:error, message} ->
         conn
@@ -25,8 +25,21 @@ defmodule HesedWeb.SessionsController do
     end
   end
 
+  def create(conn, _params),
+    do: handle_login_failure(conn, "Please fill in your email/username and password")
+
   def destroy(conn, _params) do
-    # log a user out
+    case get_session(conn, :current_user) do
+      nil ->
+        conn
+        |> redirect(to: "/login")
+
+      _ ->
+        conn
+        |> put_flash(:info, "Successfully logged out")
+        |> clear_session
+        |> redirect(to: "/login")
+    end
   end
 
   defp handle_login_failure(conn, message) do

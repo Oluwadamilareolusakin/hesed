@@ -17,6 +17,16 @@ defmodule HesedWeb.ErrorHelpers do
     end)
   end
 
+  def field_has_error(form, field) do
+    length(Keyword.get_values(form.errors, field)) > 0
+  end
+
+  def class_names_with_errors(f, field, class_names \\ "") do
+    if field_has_error(f, field) do
+      "field-with-errors " <> class_names
+    end
+  end
+
   @doc """
   Translates an error message using gettext.
   """

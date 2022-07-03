@@ -24,10 +24,10 @@ config :hesed, HesedWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :hesed, Hesed.Mailer, adapter: Swoosh.Adapters.Local
+config :hesed, Hesed.Mailer, adapter: Swoosh.Adapters.Mailgun, domain: System.fetch_env!("MAILGUN_DOMAIN")
 
 # Swoosh API client is needed for adapters other than SMTP.
-config :swoosh, :api_client, false
+config :swoosh, :api_client, Swoosh.ApiClient.Hackney
 
 # Configure esbuild (the version is required)
 config :esbuild,
@@ -50,3 +50,4 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
+import_config "#{config_env()}.secrets.exs"
