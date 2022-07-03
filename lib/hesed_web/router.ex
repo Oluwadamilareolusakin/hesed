@@ -1,6 +1,16 @@
 defmodule HesedWeb.Router do
   use HesedWeb, :router
 
+  alias Hesed.Plug.{Authenticate, EnsureAdmin}
+
+  pipeline :authenticate_user do
+    plug Authenticate
+  end
+
+  pipeline :ensure_admin do
+    plug EnsureAdmin
+  end
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -17,16 +27,31 @@ defmodule HesedWeb.Router do
   scope "/", HesedWeb do
     pipe_through :browser
 
+    pipe_through :authenticate_user
+
+    get "/", HomeController, only: [:index]
+  end
+
+  scope "/admin", HesedWeb.Admin do
+    pipe_through :browser
+
+    pipe_through [:authenticate_user, :ensure_admin]
+
+    resources "/users", UsersController, only: [:index, :delete]
+    patch "/users/:id/archive", UsersController, :archive
+  end
+
+  scope "/", HesedWeb do
+    pipe_through :browser
+
     get "/sign-up", UserRegistrationsController, :new
     post "/sign-up", UserRegistrationsController, :create
+    get "/users/:id/confirmation", UserRegistrationsController, :send_confirmation
+    get "/users/:id/confirm", UserRegistrationsController, :confirm
 
     post "/login", SessionsController, :create
     get "/login", SessionsController, :new
-    delete "/logout", SessionsController, :destroy
-
-    get "/users", UsersController, :index
-    patch "/users/:id/archive", UsersController, :archive
-    delete "/users/:id", UsersController, :destroy
+    get "/logout", SessionsController, :destroy
   end
 
   # Other scopes may use custom stacks.

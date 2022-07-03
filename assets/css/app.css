@@ -1,5 +1,6 @@
 /* This file is for your main application CSS */
 @import "./phoenix.css";
+@import "./form.css";
 
 /* Alerts and form errors used by phx.new */
 .alert {
@@ -23,17 +24,30 @@
   background-color: #f2dede;
   border-color: #ebccd1;
 }
+
+input.field-with-errors {
+  border-color: #FF2145;
+}
+
 .alert p {
   margin-bottom: 0;
 }
+
+
+
 .alert:empty {
   display: none;
 }
 .invalid-feedback {
+  font-size: .8em;
   color: #a94442;
-  display: block;
-  margin: -1rem 0 2rem;
+  display: table;
+  margin: 0 0 -1rem 2rem;
+  padding: 0 0.5rem;
+  background-color: white;
+  position: relative;
 }
+
 
 /* LiveView specific classes for your customization */
 .phx-no-feedback.invalid-feedback,

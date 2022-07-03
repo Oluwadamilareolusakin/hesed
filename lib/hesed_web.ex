@@ -98,6 +98,7 @@ defmodule HesedWeb do
       import HesedWeb.ErrorHelpers
       import HesedWeb.Gettext
       alias HesedWeb.Router.Helpers, as: Routes
+      import HesedWeb.Components.Form.Elements
     end
   end
 

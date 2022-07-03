@@ -1,7 +1,9 @@
+<h1 class="form-heading-text form-title">Sign in to your Hesed account.</h1>
+<p class="form-heading-text form-description">Get access to everything you need to manage your freelance business</p>
 <%=  form_for @conn, Routes.sessions_path(@conn, :create), [class: "sign-in"], fn f -> %>
   <div class="sign-up-form-inner">
     <%= text_input f, :user_identifier, placeholder: "Username or Email" %>
     <%= text_input f, :password, placeholder: "Password" %>
-    <%= submit "LOGIN", class: "sign-in" %>
+    <%= submit "LOGIN", class: "form-main-cta" %>
   </div>
 <% end %>

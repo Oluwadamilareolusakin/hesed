@@ -1,9 +1,7 @@
 defmodule Hesed.Users do
-  alias Hesed.Repo
-  alias Hesed.Users.User
+  alias Hesed.{Repo, Mailer, Users.User, Utils.UserIdentifierType}
   import Ecto.Query
   alias Ecto.Changeset
-  alias Hesed.Utils.UserIdentifierType
 
   def list_users(user_status) do
     case user_status do
@@ -13,28 +11,58 @@ defmodule Hesed.Users do
     end
   end
 
-  def authenticate_user(params) do
-    identifier = params["user_identifier"]
+  def authenticate_user(%{"user_identifier" => user_identifier, "password" => password} = params)
+      when user_identifier == "" or is_nil(password) == "",
+      do: {:error, "Please fill in your email/username and password"}
 
+  def authenticate_user(%{"user_identifier" => user_identifier, "password" => password}) do
     user =
-      case UserIdentifierType.check(identifier) do
-        {:email} -> Repo.get_by(User, email: identifier)
-        {:username} -> Repo.get_by(User, username: identifier)
+      case UserIdentifierType.check(user_identifier) do
+        {:email} -> Repo.get_by(User, email: user_identifier)
+        {:username} -> Repo.get_by(User, username: user_identifier)
         _ -> nil
       end
 
     with user,
-         true <- user |> User.authenticate(params["password"]) do
+         true <- user |> User.authenticate(password) do
       {:ok, user}
     else
       _ -> {:error, "Username or Password incorrect"}
     end
   end
 
+  def send_confirmation_email(id) do
+    user = Repo.get_by(User, id: id)
+
+    with %User{} <- user,
+         {:ok, email} <- Mailer.send_user_confirmation_email(user),
+         true <- is_binary(email) do
+      {:ok, email}
+    else
+      _ -> {:error, "Problem sending confirmation to your user"}
+    end
+  end
+
+  def confirm_user(id, token) do
+    with user = %User{} <- Repo.get_by(User, id: id),
+         {:ok, user} <- User.build_confirmed_user(user, token),
+         {:ok, user} = result <- Repo.update(user) do
+      result
+      |> IO.inspect()
+    else
+      {:error, changeset} -> {:error, changeset}
+      nil -> {:not_found, "Problem confirming your account, please contact support"}
+    end
+  end
+
   def create_user(params) do
-    %User{}
-    |> User.changeset(params)
-    |> Repo.insert()
+    with {:ok, user} <-
+           build_user(params)
+           |> Repo.insert() do
+      {:ok, user}
+    else
+      {:error, changeset} -> {:error, changeset}
+    end
   end
 
   def delete_user(id) do
@@ -50,6 +78,11 @@ defmodule Hesed.Users do
 
   defp show_archived(user_status) do
     user_status == "Archived"
+  end
+
+  defp build_user(params) do
+    %User{}
+    |> User.registration_changeset(params)
   end
 
   defp all_users do

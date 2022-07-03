@@ -1,0 +1,15 @@
+<h1 class="form-heading-text form-title">Sign up for a free Hesed account.</h1>
+<p class="form-heading-text form-description">Get access to everything you need to manage your freelance business</p>
+<%=  form_for @changeset, Routes.user_registrations_path(@conn, :create), [class: "sign-up-form"], fn f -> %>
+  <div class="sign-up-form-inner">
+
+    <.input field={:username} placeholder={"Username"} form={f} />
+    <.input field={:first_name} placeholder={"First Name"} form={f} />
+    <.input field={:last_name} placeholder={"Last Name"} form={f} />
+    <.input field={:email} placeholder={"Email"} form={f} />
+    <.input field={:phone_number} placeholder={"Phone Number"} form={f} />
+    <.input field={:password} placeholder={"Password"} form={f} />
+
+    <%= submit "SIGN UP", class: "form-main-cta sign-up-button" %>
+  </div>
+<% end %>
